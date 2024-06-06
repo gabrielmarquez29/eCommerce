@@ -2,62 +2,34 @@ version: '3.8'
 services:
   mysql:
     container_name: ms_mysql
-    image: mysql:latest
+    image: mysql:8.0.30
     environment:
-      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: mydatabase
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin
     volumes:
       - mysql:/var/lib/mysql
     ports:
-      - 3307:3307
+      - 3307:3306
     networks:
       - microservices-net
     restart: unless-stopped
-  
+
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: ms_phpmyadmin
     environment:
+      MYSQL_ROOT_PASSWORD: root
       PMA_HOST: mysql
-      MYSQL_ROOT_PASSWORD: admin
+      PMA_USER: root
+      PMA_PASSWORD: admin
     ports:
       - 8080:80
     networks:
       - microservices-net
     restart: unless-stopped
 
-  postgres:
-    container_name: ms_pg_sql
-    image: postgres
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      PGDATA: /data/postgres
-    volumes:
-      - postgres:/data/postgres
-    ports:
-      - 5432:5432
-    networks:
-      - microservices-net
-    restart: unless-stopped
-  
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: ms_pg_admin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin@pgadmin.org}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-    volumes:
-      - pgadmin:/var/lib/pgadmin
-    ports:
-      - 5050:80
-    networks:
-      - microservices-net
-    restart: unless-stopped
-  
   mongodb:
     image: mongo
     container_name: ms_mongo_db
@@ -79,7 +51,7 @@ services:
     ports:
       - 8081:8081
     restart: unless-stopped
-  
+
   mail-dev:
     container_name: ms-mail-dev
     image: maildev/maildev
@@ -93,6 +65,5 @@ networks:
 
 volumes:
   mysql:
-  postgres:
-  pgadmin:
+  phpmyadmin:
   mongo:
