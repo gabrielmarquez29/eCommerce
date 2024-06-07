@@ -5,7 +5,7 @@ services:
     image: mysql:8.0.30
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: mydatabase
+      MYSQL_DATABASE: products
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin
     volumes:
@@ -22,7 +22,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       PMA_HOST: mysql
-      PMA_USER: root
+      PMA_USER: admin
       PMA_PASSWORD: admin
     ports:
       - 8080:80

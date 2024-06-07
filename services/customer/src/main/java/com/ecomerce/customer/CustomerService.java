@@ -12,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomerService {
 
-	private final CustomerRepository repository=null;
-	private final CustomerMapper mapper = new CustomerMapper();
+	private final CustomerRepository repository;
+	private final CustomerMapper mapper;
 	public String createCustomer(CustomerRequest request) {
 		Customer customer = this.repository.save(mapper.toCustomer(request));
 		return customer.getId();
