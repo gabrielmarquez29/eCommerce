@@ -1,5 +1,8 @@
 package com.ecommerce.order;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,11 +11,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.ecommerce.customer.CustomerClient;
 import com.ecommerce.customer.CustomerResponse;
 import com.ecommerce.exception.BusinessException;
+import com.ecommerce.kafka.OrderConfirmation;
+import com.ecommerce.kafka.OrderProducer;
 import com.ecommerce.orderline.OrderLineRequest;
 import com.ecommerce.orderline.OrderLineService;
 import com.ecommerce.product.ProductClient;
 import com.ecommerce.product.PurchaseRequest;
+import com.ecommerce.product.PurchaseResponse;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -23,18 +30,19 @@ public class OrderService {
 	final ProductClient productClient;
 	final OrderMapper mapper;
 	final OrderLineService orderLineService;
+	final OrderProducer orderProducer;
 	public Integer createdOrder(OrderRequest request) {
 		// check the customer --> OpenFeign
 		CustomerResponse customer = this.customerClient
 				.findCustomerById(request.customerId())
 				.orElseThrow(()-> new BusinessException("Cannot create order:: No costumer exists with the provided ID:: " + request.customerId()));
-		
-		// TODO purchase the products --> product-ms (RestTemplate)
-		this.productClient.purchaseProducts(request.products());
-		
-		// TODO persist order
+
+		// purchase the products --> product-ms (RestTemplate)
+		List<PurchaseResponse> purchasedProducts = this.productClient.purchaseProducts(request.products());
+
+		// persist order
 		Order order = this.repository.save(mapper.toOrder(request));
-		// TODO persist order lines
+		// persist order lines
 		for (PurchaseRequest purchaseRequest : request.products()) {
 			orderLineService.saveOrderLine(
 					new OrderLineRequest(
@@ -42,14 +50,38 @@ public class OrderService {
 							order.getId(),
 							purchaseRequest.productId(),
 							purchaseRequest.quantity()
-							
+
 							)
 					);
 		}
-		// TODO start payment process
-		// TODO send the order confirmation --> notification-ms(kafka)
-		return null;
+		// TODO: start payment process
+		
+		// send the order confirmation --> notification-ms(kafka)
+		orderProducer.sendOrderConfirmation(new OrderConfirmation(
+				request.reference(),
+				request.amount(), 
+				request.paymentMethod(), 
+				customer, 
+				purchasedProducts));
+		
+		return order.getId();
+	}
+	public List<OrderResponse> findAll() {
+		return repository.findAll()
+				.stream()
+				.map(mapper::fromOrder)
+				.collect(Collectors.toList())
+				;
+	}
+	public OrderResponse findById(Integer orderId) {
+		
+		return repository.findById(orderId)
+				.map(mapper::fromOrder)
+				.orElseThrow(() -> new EntityNotFoundException(
+						String.format("No order found with the provided ID: %d", orderId)))
+				;
 	}
 
+	
 	
 }

@@ -9,6 +9,13 @@ spring:
       ddl-auto: create
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.commom.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: orderConfirmation:com.ecommerce.kafka.OrderConfirmation
 server:
   port: 8070
 application:
