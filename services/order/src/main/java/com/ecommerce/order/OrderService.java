@@ -3,10 +3,7 @@ package com.ecommerce.order;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.ecommerce.customer.CustomerClient;
 import com.ecommerce.customer.CustomerResponse;
@@ -15,6 +12,8 @@ import com.ecommerce.kafka.OrderConfirmation;
 import com.ecommerce.kafka.OrderProducer;
 import com.ecommerce.orderline.OrderLineRequest;
 import com.ecommerce.orderline.OrderLineService;
+import com.ecommerce.payment.PaymentClient;
+import com.ecommerce.payment.PaymentRequest;
 import com.ecommerce.product.ProductClient;
 import com.ecommerce.product.PurchaseRequest;
 import com.ecommerce.product.PurchaseResponse;
@@ -31,6 +30,8 @@ public class OrderService {
 	final OrderMapper mapper;
 	final OrderLineService orderLineService;
 	final OrderProducer orderProducer;
+	
+	final PaymentClient paymentClient;
 	public Integer createdOrder(OrderRequest request) {
 		// check the customer --> OpenFeign
 		CustomerResponse customer = this.customerClient
@@ -54,7 +55,15 @@ public class OrderService {
 							)
 					);
 		}
-		// TODO: start payment process
+		//start payment process
+		PaymentRequest paymentRequest = new PaymentRequest(
+				request.amount(),
+				request.paymentMethod(),
+				order.getId(),
+				order.getReference(),
+				customer
+				);
+		paymentClient.requestOrderPayment(paymentRequest);
 		
 		// send the order confirmation --> notification-ms(kafka)
 		orderProducer.sendOrderConfirmation(new OrderConfirmation(
