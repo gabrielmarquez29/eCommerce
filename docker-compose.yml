@@ -10,7 +10,7 @@ services:
       MYSQL_PASSWORD: admin
     volumes:
       - mysql:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # Copiar el script de inicialización
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql # Copiar el script de inicialización
     ports:
       - 3307:3306
     networks:
@@ -89,7 +89,13 @@ services:
     ports:
       - 1080:1080
       - 1025:1025
-
+  zipkin:
+    container_name: zipkin
+    image: openzipkin/zipkin
+    ports:
+      - 9411:9411
+    networks:
+      - microservices-net
 networks:
   microservices-net:
     driver: bridge
