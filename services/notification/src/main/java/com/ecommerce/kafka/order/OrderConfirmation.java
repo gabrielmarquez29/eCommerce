@@ -6,11 +6,11 @@ import java.util.List;
 import com.ecommerce.kafka.payment.PaymentMethod;
 
 public record OrderConfirmation(
-		String orderReference,
-		BigDecimal totalAmount,
-		PaymentMethod paymentMethd, 
-		Customer customer, 
-		List<Product> products
+	       String orderReference,
+	        BigDecimal totalAmount,
+	        PaymentMethod paymentMethod,
+	        Customer customer,
+	        List<Product> products
 		) {
 
 }

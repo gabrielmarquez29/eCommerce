@@ -1,10 +1,10 @@
 -- V1__intit_tables.sql
 
 -- Creación de la base de datos products si no existe
-CREATE DATABASE IF NOT EXISTS products;
+CREATE DATABASE IF NOT EXISTS product;
 
 -- Cambio al contexto de la base de datos products
-USE products;
+USE product;
 
 -- Creación de la tabla category
 CREATE TABLE IF NOT EXISTS category

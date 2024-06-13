@@ -5,11 +5,12 @@ services:
     image: mysql:8.0.30
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: products, payment
+      MYSQL_ROOT_USER: root
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin
     volumes:
       - mysql:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # Copiar el script de inicialización
     ports:
       - 3307:3306
     networks:
@@ -20,10 +21,12 @@ services:
     image: phpmyadmin/phpmyadmin
     container_name: ms_phpmyadmin
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      #MYSQL_ROOT_PASSWORD: root
+      #MYSQL_USER: admin
+      #MYSQL_PASSWORD: admin 
       PMA_HOST: mysql
-      PMA_USER: admin
-      PMA_PASSWORD: admin
+      PMA_USER: root
+      PMA_PASSWORD: root
       PMA_PORT: 3306
     ports:
       - 8080:80

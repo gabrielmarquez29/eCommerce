@@ -1,7 +1,7 @@
 -- V2__insert_data.sql
 
 -- Cambio al contexto de la base de datos products
-USE products;
+USE product;
 
 -- Eliminar tablas existentes si es que ya existen
 DROP TABLE IF EXISTS product;
@@ -64,4 +64,4 @@ INSERT INTO product (description, name, available_quantity, price, category_id) 
 ('Tarjeta gráfica NVIDIA GeForce RTX 3070', 'NVIDIA GeForce RTX 3070 Graphics Card', 30, 499.99, 10), -- Tarjeta Gráfica - Categoría 10
 ('Webcam Logitech C920', 'Logitech C920 Webcam', 15, 79.99, 11), -- Periférico - Categoría 11
 ('Auriculares inalámbricos Sony WH-1000XM4', 'Sony WH-1000XM4 Wireless Headphones', 20, 349.99, 12), -- Audio - Categoría 12
-('Altavoces Bluetooth JBL Flip 5', 'JBL Flip 5 Bluetooth Speakers', 30, 99.99, 13); -- Audio - Categoría 12
+('Altavoces Bluetooth JBL Flip 5', 'JBL Flip 5 Bluetooth Speakers', 30, 99.99, 12); -- Audio - Categoría 12

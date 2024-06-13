@@ -47,8 +47,8 @@ public class NotificationConsumer {
 	};
 
 	@KafkaListener(topics = "order-topic")
-	public void consumeOrderNoticationConfirmation(OrderConfirmation orderConfirmation) throws MessagingException {
-		log.info( String.format("Consuming the message from payment-topic:: %s", orderConfirmation));
+	public void consumeOrderConfirmationNotifications(OrderConfirmation orderConfirmation) throws MessagingException {
+		log.info( String.format("Consuming the message from order-topic:: %s", orderConfirmation));
 		repository.save(
 				Notification.builder()
 				.type(NotificationType.ORDER_CONFIRMATION)
